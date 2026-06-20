@@ -8,7 +8,7 @@ import os
 st.set_page_config(page_title="Movie Recommender", page_icon="🎬", layout="centered")
 st.title('🎬 Movie Recommendation System')
 
-# 1. GitHub repository se movie_dict.pkl load karna
+# 1. Load movies data from GitHub repository
 @st.cache_resource
 def load_movies_data():
     file_name = "movie_dict.pkl"
@@ -22,35 +22,42 @@ def load_movies_data():
 movies_dict = load_movies_data()
 movies = pd.DataFrame(movies_dict)
 
-# 2. Similarity matrix ko direct website par calculate karne ka function (No Google Drive Needed)
+# 2. Extract column features dynamically to build similarity matrix
 @st.cache_resource
 def compute_similarity(df):
-    with st.spinner('Initializing recommendation engine... Please wait a moment.'):
-        # Agar aapne tags ke alawa overview ya genres use kiya hai, toh code khud handle kar lega
-        text_column = 'tags' if 'tags' in df.columns else ('overview' if 'overview' in df.columns else 'genres')
+    # This automatically finds text/tag fields to compute algorithm matches safely
+    text_features = []
+    for col in ['tags', 'overview', 'genres', 'keywords']:
+        if col in df.columns:
+            text_features.append(col)
+            
+    if text_features:
+        # Combine available text attributes to maintain high-quality results
+        combined_text = df[text_features].astype(str).agg(' '.join, axis=1)
+    else:
+        # Fallback to absolute clean layout if structure differs
+        combined_text = df.astype(str).agg(' '.join, axis=1)
         
-        # Missing values ko fill karna
-        df[text_column] = df[text_column].fillna('')
-        
-        tfidf = TfidfVectorizer(stop_words='english')
-        tfidf_matrix = tfidf.fit_transform(df[text_column])
-        return cosine_similarity(tfidf_matrix, tfidf_matrix)
+    tfidf = TfidfVectorizer(stop_words='english')
+    tfidf_matrix = tfidf.fit_transform(combined_text)
+    return cosine_similarity(tfidf_matrix, tfidf_matrix)
 
 similarity = compute_similarity(movies)
 
-# Movie Recommendation Logic
+# Movie Recommendation Engine Logic
 def recommend(movie):
     try:
-        movie_index = movies[movies['title'] == movie].index
+        # Matching title casing explicitly to avoid array index failures
+        movie_index = movies[movies['title'].str.lower() == movie.lower()].index[0]
         distances = similarity[movie_index]
-        movies_list = sorted(list(enumerate(distances)), reverse=True, key=lambda x: x)[1:6]
+        movies_list = sorted(list(enumerate(distances)), reverse=True, key=lambda x: x[1])[1:6]
         
         recommended_movies = []
         for i in movies_list:
-            recommended_movies.append(movies.iloc[i]['title'])
+            recommended_movies.append(movies.iloc[i['index'] if 'index' in movies.columns else i[0]]['title'])
         return recommended_movies
     except Exception as e:
-        return ["Error calculating recommendation or movie title mismatch."]
+        return [f"No recommendations found or dataframe parsing error. Details: {e}"]
 
 # Dropdown UI
 selected_movie_name = st.selectbox(
@@ -60,7 +67,8 @@ selected_movie_name = st.selectbox(
 
 # Render Button
 if st.button('Recommend'):
-    recommendations = recommend(selected_movie_name)
-    st.subheader('Top 5 recommended movies for you:')
-    for i in recommendations:
-        st.write(f"🍿 {i}")
+    with st.spinner('Generating matching recommendations...'):
+        recommendations = recommend(selected_movie_name)
+        st.subheader('Top 5 recommended movies for you:')
+        for i in recommendations:
+            st.write(f"🍿 {i}")
