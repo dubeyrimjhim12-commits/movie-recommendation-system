@@ -7,16 +7,22 @@ import os
 st.set_page_config(page_title="Movie Recommender", page_icon="🎬", layout="centered")
 st.title('🎬 Movie Recommendation System')
 
-# Movies dictionary load karna
-movies_dict = pickle.load(open('movies_dict.pkl', 'rb'))
-movies = pd.DataFrame(movies_dict)
+# 1. Google Drive se movies_dict.pkl download karne ka function
+@st.cache_resource
+def load_movies_data():
+    url = "https://google.com"
+    file_name = "movies_dict.pkl"
+    if not os.path.exists(file_name):
+        response = requests.get(url)
+        with open(file_name, "wb") as f:
+            f.write(response.content)
+    return pickle.load(open(file_name, 'rb'))
 
-# Google Drive se similarity.pkl download karne ka automatic function
+# 2. Google Drive se similarity.pkl download karne ka function
 @st.cache_resource
 def load_similarity():
     url = "https://google.com"
     file_name = "similarity.pkl"
-    
     if not os.path.exists(file_name):
         with st.spinner('Model files load ho rahi hain, kripya thoda intezar karein...'):
             response = requests.get(url)
@@ -24,13 +30,16 @@ def load_similarity():
                 f.write(response.content)
     return pickle.load(open(file_name, 'rb'))
 
+# Dono data files ko load karna
 try:
+    movies_dict = load_movies_data()
+    movies = pd.DataFrame(movies_dict)
     similarity = load_similarity()
 except Exception as e:
-    st.error("Model load karne mein dikkat aa rahi hai.")
+    st.error("Google Drive se data load karne mein dikkat aa rahi hai. Kripya permissions check karein.")
     st.stop()
 
-# Recommendation Function
+# Movie Recommend karne wala function
 def recommend(movie):
     movie_index = movies[movies['title'] == movie].index
     distances = similarity[movie_index]
@@ -41,7 +50,7 @@ def recommend(movie):
         recommended_movies.append(movies.iloc[i].title)
     return recommended_movies
 
-# Dropdown Menu
+# Website par Dropdown Menu
 selected_movie_name = st.selectbox(
     'Apni pasandida movie chunein:',
     movies['title'].values
