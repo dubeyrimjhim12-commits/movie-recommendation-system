@@ -9,7 +9,7 @@ In today's digital era, finding the right content from thousands of available op
 * **Personalized Recommendations:** Suggests top movies similar to the user's favorite inputs.
 * **Smart Search:** Quick filtering based on movie titles, genres, keywords, or cast.
 * **Interactive UI:** A clean and user-friendly web interface to explore recommendations.
-* **Data Insights:** Analyzes movie metadata including ratings, genres, and overview descriptions.
+* **Data Insights:** Analyzes movie metadata including ratings, genres, and overview descriptions
 
 ### 🛠️ Tech Stack & Tools
 * **Language:** Python
@@ -17,3 +17,6 @@ In today's digital era, finding the right content from thousands of available op
 * **Machine Learning:** Scikit-learn (Cosine Similarity, CountVectorizer / TfidfVectorizer)
 * **Frontend/Deployment:** Streamlit (or Flask/Django if applicable)
 * **Dataset Used:** TMDB 5000 Movies Dataset / MovieLens Dataset
+
+### 📊 Dataset
+Download the dataset used in this project from here: [Click here to download the dataset](https://kaggle.com)
