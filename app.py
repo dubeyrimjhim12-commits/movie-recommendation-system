@@ -99,38 +99,32 @@ import streamlit as st
 import requests
 
 # =========================================================
-# 🔒 SECRET ADMIN COUNTER (Sirf Rimjhim ko dikhega)
+# 🕵️‍♂️ COMPLETELY HIDDEN COUNTER (Normal user ko kuch nahi dikhega)
 # =========================================================
 
-# Background mein clicks track karne ka URL
+# Background mein clicks track karne ka URL (Chupchaap kaam karega)
 app_id = "rimjhim_dubey_popcorn_2026"
 global_url = f"https://moostrap.com{app_id}/clicks"
 
 try:
-    # Yeh line background mein chupchaap har visitor ka click count badhati rahegi
     response = requests.get(global_url).json()
     global_clicks = response.get("w_hits", "0")
 except Exception:
     global_clicks = "Live"
 
-# App ke bilkul end mein ek chota sa expander (dropdown)
-with st.expander("🛠️ Admin Panel"):
-    # Secret Password Input
-    admin_password = st.text_input("Enter Admin Password to view analytics", type="password")
-    
-    # 🚨 Aap apna password yahan badal sakti hain (Abhi 'rimjhim123' set hai)
-    if admin_password == "rimjhim123":
-        st.success("Access Granted! Hello Rimjhim ✨")
-        
-        # Sundar Dashboard Box jo sirf password dalne par khulega
-        st.markdown(
-            f"""
-            <div style='text-align: center; background-color: #262730; padding: 15px; border-radius: 12px; border: 1px solid #444; max-width: 280px; margin: 10px auto;'>
-                <p style='margin: 0; font-size: 14px; color: #aaaaaa; font-weight: bold;'>🍿 Total Live App Clicks 🍿</p>
-                <h1 style='margin: 10px 0 0 0; color: #FF4B4B; font-weight: bold; font-size: 36px;'>{global_clicks}</h1>
-            </div>
-            """, 
-            unsafe_allow_html=True
-        )
-    elif admin_password:
-        st.error("Incorrect Password! Access Denied.")
+# Streamlit ke query parameters check karna (URL check karega)
+query_params = st.query_params
+
+# 🚨 Agar URL mein '?show=rimjhim' likha hoga, tabhi counter dikhega
+if query_params.get("show") == "rimjhim":
+    st.markdown("---")
+    st.markdown(
+        f"""
+        <div style='text-align: center; background-color: #262730; padding: 15px; border-radius: 12px; border: 1px solid #444; max-width: 280px; margin: 10px auto;'>
+            <p style='margin: 0; font-size: 14px; color: #aaaaaa; font-weight: bold;'>🍿 Total Live App Clicks 🍿</p>
+            <h1 style='margin: 10px 0 0 0; color: #FF4B4B; font-weight: bold; font-size: 36px;'>{global_clicks}</h1>
+        </div>
+        """, 
+        unsafe_allow_html=True
+    )
+
