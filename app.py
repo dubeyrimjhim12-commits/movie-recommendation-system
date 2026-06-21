@@ -72,3 +72,21 @@ if st.button('Recommend'):
         st.subheader('Top 5 recommended movies for you:')
         for i in recommendations:
             st.write(f"🍿 {i}")
+# =========================================================
+# DEVELOPER CREDITS (Is code ko file ke sabse niche paste karein)
+# =========================================================
+st.markdown("---")
+st.markdown(
+    """
+    <div style='text-align: center; padding: 10px;'>
+        <p style='color: #888888; font-size: 16px; margin-bottom: 5px;'>
+            🍿 <b>Popcorn Buddy</b> © 2026
+        </p>
+        <p style='color: #555555; font-size: 14px;'>
+            Designed & Developed with ❤️ by 
+            <span style='color: #FF4B4B; font-weight: bold; font-size: 16px;'>Rimjhim Dubey</span>
+        </p>
+    </div>
+    """, 
+    unsafe_allow_html=True
+)
