@@ -20,3 +20,8 @@ In today's digital era, finding the right content from thousands of available op
 
 ### 📊 Dataset
 Download the dataset used in this project from here: [Click here to download the dataset](https://kaggle.com)
+
+## 🔗 Live Application
+🌐 **Try the live web app here:** [https://popcorn-buddy.streamlit.app/](https://popcorn-buddy.streamlit.app/)
+
+---
