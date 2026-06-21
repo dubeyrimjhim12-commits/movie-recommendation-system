@@ -99,39 +99,38 @@ import streamlit as st
 import requests
 
 # =========================================================
-# 📊 LIVE DYNAMIC VISITOR & CLICK COUNTER CODE
+# 🔒 SECRET ADMIN COUNTER (Sirf Rimjhim ko dikhega)
 # =========================================================
-st.markdown("---")
-st.markdown("### 📊 Popcorn Buddy Live Analytics")
 
-# Aapke app ke liye ek unique key namespace (Rimjhim Dubey Popcorn App)
-namespace = "rimjhim_dubey_popcorn_buddy_2026"
-key = "app_clicks"
-
-# Scannable secure counter API url
-counter_url = f"https://scryfall.com" # Fallback setup ya specific key counter
+# Background mein clicks track karne ka URL
+app_id = "rimjhim_dubey_popcorn_2026"
+global_url = f"https://moostrap.com{app_id}/clicks"
 
 try:
-    # Python requests se count badhane ka tarika
-    # Yeh code internet se live click value uthayega aur +1 karega
-    import random
-    # Streamlit standard state memory check
-    if 'visitor_number' not in st.session_state:
-        st.session_state['visitor_number'] = random.randint(45, 60) # Initial base load if server resets
-    else:
-        st.session_state['visitor_number'] += 1
-        
-    display_count = st.session_state['visitor_number']
+    # Yeh line background mein chupchaap har visitor ka click count badhati rahegi
+    response = requests.get(global_url).json()
+    global_clicks = response.get("w_hits", "0")
 except Exception:
-    display_count = "Live Active"
+    global_clicks = "Live"
 
-# Ek sundar UI counter box jo screen par live dikhega
-st.markdown(
-    f"""
-    <div style='text-align: center; background-color: #f0f2f6; padding: 15px; border-radius: 12px; border: 1px solid #e0e0e0; max-width: 300px; margin: 10px auto;'>
-        <p style='margin: 0; font-size: 14px; color: #555555; font-weight: bold;'>🍿 Total App Clicks / Visits 🍿</p>
-        <h1 style='margin: 10px 0 0 0; color: #FF4B4B; font-weight: bold; font-size: 32px;'>{display_count}</h1>
-    </div>
-    """, 
-    unsafe_allow_html=True
-)
+# App ke bilkul end mein ek chota sa expander (dropdown)
+with st.expander("🛠️ Admin Panel"):
+    # Secret Password Input
+    admin_password = st.text_input("Enter Admin Password to view analytics", type="password")
+    
+    # 🚨 Aap apna password yahan badal sakti hain (Abhi 'rimjhim123' set hai)
+    if admin_password == "rimjhim123":
+        st.success("Access Granted! Hello Rimjhim ✨")
+        
+        # Sundar Dashboard Box jo sirf password dalne par khulega
+        st.markdown(
+            f"""
+            <div style='text-align: center; background-color: #262730; padding: 15px; border-radius: 12px; border: 1px solid #444; max-width: 280px; margin: 10px auto;'>
+                <p style='margin: 0; font-size: 14px; color: #aaaaaa; font-weight: bold;'>🍿 Total Live App Clicks 🍿</p>
+                <h1 style='margin: 10px 0 0 0; color: #FF4B4B; font-weight: bold; font-size: 36px;'>{global_clicks}</h1>
+            </div>
+            """, 
+            unsafe_allow_html=True
+        )
+    elif admin_password:
+        st.error("Incorrect Password! Access Denied.")
