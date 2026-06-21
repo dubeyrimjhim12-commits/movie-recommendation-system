@@ -1,4 +1,9 @@
 import streamlit as st
+st.set_page_config(
+    page_title="Popcorn Buddy | Movie Recommendation System by Rimjhim Dubey",
+    page_icon="🍿"
+)
+
 import pickle
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
